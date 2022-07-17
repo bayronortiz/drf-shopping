@@ -1,0 +1,44 @@
+[
+    {
+      "model": "shopping_list.ShoppingItem",
+      "fields": {
+        "name": "Piña",
+        "purchased": false
+      }
+    },
+    {
+      "model": "shopping_list.ShoppingItem",
+      "fields": {
+        "name": "Chocolate",
+        "purchased": false
+      }
+    },
+    {
+      "model": "shopping_list.ShoppingItem",
+      "fields": {
+        "name": "Leche",
+        "purchased": false
+      }
+    },
+    {
+        "model": "shopping_list.ShoppingItem",
+        "fields": {
+          "name": "Arroz",
+          "purchased": false
+        }
+    },
+    {
+        "model": "shopping_list.ShoppingItem",
+        "fields": {
+          "name": "Orégano",
+          "purchased": false
+        }
+    },
+    {
+        "model": "shopping_list.ShoppingItem",
+        "fields": {
+          "name": "Pizza",
+          "purchased": false
+        }
+    }
+  ]
