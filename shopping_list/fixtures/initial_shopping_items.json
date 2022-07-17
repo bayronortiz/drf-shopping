@@ -40,5 +40,26 @@
           "name": "Pizza",
           "purchased": false
         }
+    },
+    {
+        "model": "shopping_list.ShoppingItem",
+        "fields": {
+          "name": "Ajo",
+          "purchased": true
+        }
+    },
+    {
+        "model": "shopping_list.ShoppingItem",
+        "fields": {
+          "name": "Brócoli",
+          "purchased": true
+        }
+    },
+    {
+        "model": "shopping_list.ShoppingItem",
+        "fields": {
+          "name": "Berenjena",
+          "purchased": true
+        }
     }
   ]
