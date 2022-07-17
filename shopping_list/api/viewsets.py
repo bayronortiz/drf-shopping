@@ -31,3 +31,14 @@ class ShoppingItemViewSet(viewsets.ModelViewSet):
         ShoppingItem.objects.all().delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+    @action(detail=False, methods=['PATCH'], url_path='mark-bulk-purchased', url_name='mark-bulk-purchased')
+    def mark_bulk_purchased(self, request):
+        """Custom action to bulk update data"""
+        try:
+            qs = ShoppingItem.objects.filter(id__in=request.data['shopping_items'])
+            qs.update(purchased=request.data['value'])   # Actualiza compra
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(status=status.HTTP_200_OK)
