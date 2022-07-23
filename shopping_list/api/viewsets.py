@@ -42,3 +42,11 @@ class ShoppingItemViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=['PATCH'], url_path='unmark-all-bulk-purchased', url_name='unmark-all-bulk-purchased')
+    def unmark_all_bulk_purchased(self, request):
+        """Custom action to unmark all bulk purchased"""
+        qs = ShoppingItem.objects.all()
+        qs.update(purchased=False)
+     
+        return Response(status=status.HTTP_200_OK)
