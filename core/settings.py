@@ -25,7 +25,10 @@ SECRET_KEY = '+*-g77s$#($xgj0nm)%61bn+41jl_whjjkc+v05#ht1#+1psbb'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1'
+]
 
 
 # Application definition
@@ -41,6 +44,7 @@ INSTALLED_APPS = [
 
     # Third party
     'rest_framework',
+    'corsheaders',
 
     # Own
     'shopping_list'
@@ -49,6 +53,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -143,3 +148,7 @@ if not DEBUG:
     REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = (
         "rest_framework.renderers.JSONRenderer",
     )
+
+
+# CORS settings
+CORS_ORIGIN_ALLOW_ALL = DEBUG
