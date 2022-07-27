@@ -2,7 +2,6 @@
 import pytest
 import uuid
 
-
 # Django imports
 from django.urls import reverse
 
@@ -12,16 +11,18 @@ from rest_framework.test import APIClient
 
 # Models imports
 from shopping_list.models import ShoppingList, ShoppingItem
+from shopping_list.tests.conftest import create_authenticated_client, create_user
 
 
 # CREATE TEST
 @pytest.mark.django_db
-def test_valid_shopping_list_is_created():
+def test_valid_shopping_list_is_created(create_user, create_authenticated_client):
     url = reverse('all-shopping-lists')
     data = {
         'name': 'Artistas'
     }
-    client = APIClient()
+    # client = APIClient()    # Test sin autenticación
+    client = create_authenticated_client(create_user())     # Test autenticación básica Django, aplicando fixtures
     response = client.post(url, data, format='json')
 
     assert response.status_code == status.HTTP_201_CREATED
