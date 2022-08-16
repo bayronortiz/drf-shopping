@@ -1,9 +1,11 @@
 # Python imports
+from venv import create
 import pytest
 import uuid
 
 # Django imports
 from django.urls import reverse
+from django.contrib.auth.models import User
 
 # DRF imports
 from rest_framework import status
@@ -103,6 +105,16 @@ def test_shopping_list_includes_only_corresponding_items(create_user, create_aut
     assert response.data['shopping_items'][0]['name'] == 'Kathia Buniatishvili'
     assert response.data['shopping_items'][1]['name'] == 'Mariam Kurasbediani'
 
+@pytest.mark.django_db
+def test_admin_can_retrieve_shopping_list(create_user, admin_client, create_shopping_list):
+    user = create_user()
+    shopping_list = create_shopping_list(user, 'Admin')
+
+    url = reverse('shopping-list-detail', args=[shopping_list.id])
+    response = admin_client.get(url, format='json')     # admin_client is a fixture from pytest library
+
+    assert response.status_code == status.HTTP_200_OK
+
 
 # UPDATE TESTS
 @pytest.mark.django_db
@@ -171,6 +183,38 @@ def test_shopping_list_not_changed_because_name_missing_with_partial_update(crea
 
     assert response.status_code == status.HTTP_200_OK
 
+@pytest.mark.django_db
+def test_update_shopping_list_restricted_if_not_member(create_user, create_authenticated_client, create_shopping_list):
+    user = create_user()
+    another_user = User.objects.create_user('Creator', 'creator@list.com', 'blbalblab')
+    client = create_authenticated_client(user)
+    shopping_list = create_shopping_list(another_user, 'Bicicletas')
+
+    url = reverse('shopping-list-detail', args=[shopping_list.id])
+    data = {
+        'name': 'Artistas'
+    }
+
+    response = client.put(url, data=data, format='json')
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+@pytest.mark.django_db
+def test_partial_update_shopping_list_restricted_if_not_member(create_user, create_authenticated_client, create_shopping_list):
+    user = create_user()
+    another_user = User.objects.create_user('Creator', 'creator@list.com', 'blbalblab')
+    client = create_authenticated_client(user)
+    shopping_list = create_shopping_list(another_user, 'Bicicletas')
+
+    url = reverse('shopping-list-detail', args=[shopping_list.id])
+    data = {
+        'name': 'Artistas'
+    }
+
+    response = client.patch(url, data=data, format='json')
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
 
 # DELETE TESTS
 @pytest.mark.django_db
@@ -201,3 +245,15 @@ def test_shopping_list_not_deleted_because_id_invalid(create_user, create_authen
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
     assert ShoppingList.objects.count() == 1    
+
+@pytest.mark.django_db
+def test_delete_shopping_list_restricted_if_not_member(create_user, create_authenticated_client, create_shopping_list):
+    user = create_user()
+    another_user = User.objects.create_user('Creator', 'creator@list.com', 'blbalblab')
+    client = create_authenticated_client(user)
+    shopping_list = create_shopping_list(another_user, 'Carros')
+
+    url = reverse('shopping-list-detail', args=[shopping_list.id])
+    response = client.delete(url, format='json')
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
