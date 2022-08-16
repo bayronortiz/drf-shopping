@@ -10,10 +10,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 # Models imports
-from shopping_list.models import ShoppingList, ShoppingItem
-from shopping_list.tests.conftest import (
-    create_authenticated_client, create_user, create_shopping_list, create_shopping_item
-)
+from shopping_list.models import ShoppingList
 
 
 # CREATE TEST
