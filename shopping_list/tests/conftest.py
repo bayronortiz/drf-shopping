@@ -13,9 +13,10 @@ from shopping_list.models import ShoppingItem, ShoppingList
 
 @pytest.fixture(scope='session')
 def create_shopping_item():     # Clousure
-    def _create_shopping_item(name, user):
-        shopping_list = ShoppingList.objects.create(name='Mercado')
-        shopping_list.members.add(user)
+    def _create_shopping_item(user, name, shopping_list_name='Mercado', shopping_list=None):
+        if not shopping_list:
+            shopping_list = ShoppingList.objects.create(name=shopping_list_name)
+            shopping_list.members.add(user)
         shopping_item = ShoppingItem.objects.create(name=name, shopping_list=shopping_list)
 
         return shopping_item
@@ -43,8 +44,8 @@ def create_authenticated_client():
 
 @pytest.fixture(scope='session')
 def create_shopping_list():
-    def _create_shopping_list(user):
-        shopping_list = ShoppingList.objects.create(name='Juguetes')
+    def _create_shopping_list(user, name='Artistas'):
+        shopping_list = ShoppingList.objects.create(name=name)
         shopping_list.members.add(user)
 
         return shopping_list
