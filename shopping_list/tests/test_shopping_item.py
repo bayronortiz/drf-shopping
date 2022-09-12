@@ -1,10 +1,12 @@
 # Python imports
 import pytest
 import uuid
+import json
 
 
 # Django imports
 from django.urls import reverse
+from django.contrib.auth.models import User
 
 # DRF imports
 from rest_framework import status
@@ -34,6 +36,23 @@ def test_valid_shopping_item_is_created(create_user, create_authenticated_client
     assert response.data['purchased'] == False
 
 @pytest.mark.django_db
+def test_admin_can_add_shopping_items(create_user, create_authenticated_client, admin_client, create_shopping_list):
+    # user = create_user()
+    user = User.objects.get(username='admin')
+    client = create_authenticated_client(user)
+    shopping_list = create_shopping_list(user, name='Bicicletas')
+
+    url = reverse('add-shopping-item', kwargs={'pk':shopping_list.id})
+    data = {
+        "name": "Giant",
+    }
+    
+    response = client.post(url, data=data, format='json')     # admin_client is a fixture from pytest library
+    print(response)
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+@pytest.mark.django_db
 def test_create_shopping_item_missing_data_returns_bad_request(create_user, create_authenticated_client, create_shopping_list):
     user = create_user()
     client = create_authenticated_client(user)
@@ -60,6 +79,22 @@ def test_shopping_item_is_retrieved_by_id(create_user, create_authenticated_clie
 
     assert response.status_code == status.HTTP_200_OK
     assert response.data['name'] == 'Arroz'
+
+@pytest.mark.django_db
+def test_not_member_of_list_can_not_add_shopping_item(create_user, create_authenticated_client, create_shopping_list):
+    user = create_user()
+    another_user = User.objects.create_user('Creator', 'creator@list.com', 'password')
+    client = create_authenticated_client(user)
+    shopping_list = create_shopping_list(another_user, 'Bicicletas')
+
+    url = reverse('add-shopping-item', args=[shopping_list.id])
+    data = {
+        'name': 'Giant'
+    }
+
+    response = client.post(url, data=data, format='json')
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 # UPDATE TEST
